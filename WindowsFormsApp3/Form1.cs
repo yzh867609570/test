@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpeechLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,6 +21,27 @@ namespace WindowsFormsApp3
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            SpVoice voice = new SpVoice();
+            voice.Rate = -5; //语速,[-10,10]
+            voice.Volume = 100; //音量,[0,100]
+            voice.Voice = voice.GetVoices().Item(0); //语音库
+            voice.Speak(comboBox4.Text);
+        }
+
+        private void btnSpeak_Click(object sender, EventArgs e)
+        {
+            SpFileStream stream = new SpFileStream();
+            stream.Open(@"C:\Users\tom86\Desktop\voice.wav", SpeechStreamFileMode.SSFMCreateForWrite, false);
+            SpVoice voice = new SpVoice();
+            voice.AudioOutputStream = stream;
+            voice.Speak(comboBox5.Text);
+            voice.WaitUntilDone(Timeout.Infinite);
+            stream.Close();
+            MessageBox.Show("ok");
         }
 
         private void button1_Click(object sender, EventArgs e)
