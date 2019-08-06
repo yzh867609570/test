@@ -22,7 +22,7 @@ namespace WindowsFormsApp3
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("用户名或者密码不能为空", "登录提示");
+            MessageBox.Show("登录失败", "登录提示");
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -61,7 +61,7 @@ namespace WindowsFormsApp3
             //        { "file", "文件"}
             //    });
 
-            comboBox2.Text = PostData(url, "file:文件");
+            //comboBox2.Text = PostData(url, "file:文件");
 
         }
 
