@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,7 +23,12 @@ namespace WindowsFormsApp3
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("登录失败", "登录提示");
+            comboBox3.Text = GetResult(
+                GetHisogram(Resize(@"C:\Users\tom86\Desktop\85491.png", @"C:\Users\tom86\Desktop\85491-AAA.png")),
+                GetHisogram(Resize(@"C:\Users\tom86\Desktop\85490.png", @"C:\Users\tom86\Desktop\85490-BBB.png"))
+                ).ToString();
+
+            //comboBox3.Text = CheckImg(@"C:\Users\tom86\Desktop\85491.png", @"C:\Users\tom86\Desktop\85491.png").ToString();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -52,17 +58,124 @@ namespace WindowsFormsApp3
 
             //comboBox2.Text = HttpDownloadFile(url, @"D:\Temp\1");
 
-            //comboBox2.Text = Post1(url);
-
             //comboBox2.Text = PostDataGetHtml(url, "file:文件");
 
-            //comboBox2.Text = Post2(url, new Dictionary<string, string>
-            //    {
-            //        { "file", "文件"}
-            //    });
+            comboBox2.Text = Post2(url, new Dictionary<string, string>
+                {
+                    { "file", "文件"}
+                });
 
             //comboBox2.Text = PostData(url, "file:文件");
 
+            //comboBox3.Text = Post1(url, "file=文件") + Post1(url, "file:文件");
+        }
+
+        #region 图像相似度对比
+        /// <summary>
+        /// 将图像转化成相同大小，我们暂且转化成256 X 256
+        /// </summary>
+        /// <param name="imageFile">需要对比的图片地址</param>
+        /// <param name="newImageFile">转化后的新图片地址</param>
+        /// <returns></returns>
+        public Bitmap Resize(string imageFile, string newImageFile)
+        {
+            Bitmap imgOutput = new Bitmap(Image.FromFile(imageFile), 256, 256);
+            imgOutput.Save(newImageFile, ImageFormat.Jpeg);
+            imgOutput.Dispose();
+
+            return (Bitmap)Image.FromFile(newImageFile);
+        }
+
+        //计算图像的直方图
+        public int[] GetHisogram(Bitmap img)
+        {
+            BitmapData data = img.LockBits(new System.Drawing.Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+            int[] histogram = new int[256];
+
+            unsafe
+            {
+                byte* ptr = (byte*)data.Scan0;
+
+                int remain = data.Stride - data.Width * 3;
+
+                for (int i = 0; i < histogram.Length; i++)
+                    histogram[i] = 0;
+                for (int i = 0; i < data.Height; i++)
+                {
+                    for (int j = 0; j < data.Width; j++)
+                    {
+                        int mean = ptr[0] + ptr[1] + ptr[2];
+
+                        mean /= 3;
+
+                        histogram[mean]++;
+
+                        ptr += 3;
+
+                    }
+                    ptr += remain;
+                }
+            }
+            img.UnlockBits(data);
+            return histogram;
+        }
+
+        //计算相减后的绝对值
+        private float GetAbs(int firstNum, int secondNum)
+        {
+            float abs = Math.Abs((float)firstNum - (float)secondNum);
+            float result = Math.Max(firstNum, secondNum);
+
+            if (result == 0)
+                result = 1;
+
+            return abs / result;
+        }
+
+        //最终计算结果
+        public float GetResult(int[] firstNum, int[] scondNum)
+        {
+            if (firstNum.Length != scondNum.Length)
+                return 0;
+            else
+            {
+                float result = 0;
+                int j = firstNum.Length;
+
+                for (int i = 0; i < j; i++)
+                {
+                    result += 1 - GetAbs(firstNum[i], scondNum[i]);
+
+                    Console.WriteLine(i + "----" + result);
+                }
+
+                return result / j;
+            }
+        }
+
+        #endregion
+
+        public bool CheckImg(string filePath1, string filePath2)
+        {
+            MemoryStream ms1 = new MemoryStream();
+            Image image1 = Image.FromFile(filePath1);
+            image1.Save(ms1, System.Drawing.Imaging.ImageFormat.Png);
+
+            string img1 = Convert.ToBase64String(ms1.ToArray());
+
+            Image image2 = Image.FromFile(filePath2);
+            image2.Save(ms1, System.Drawing.Imaging.ImageFormat.Png);
+            string img2 = Convert.ToBase64String(ms1.ToArray());
+
+            if (img1.Equals(img2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -78,7 +191,7 @@ namespace WindowsFormsApp3
             StreamReader sr = null;
             HttpWebResponse response = null;
             HttpWebRequest request = null;
-            Encoding encoding = System.Text.Encoding.GetEncoding("UTF-8");
+            Encoding encoding = Encoding.GetEncoding("UTF-8");
             byte[] data = encoding.GetBytes(postData);
             // 准备请求...
             try
@@ -197,35 +310,39 @@ namespace WindowsFormsApp3
             }
         }
 
-        public string Post1(string url)
+        /// <summary>
+        /// 指定Post地址使用Get 方式获取全部字符串
+        /// </summary>
+        /// <param name="url">请求后台地址</param>
+        /// <param name="content">Post提交数据内容(utf-8编码的)</param>
+        /// <returns></returns>
+        public static string Post1(string url, string content)
         {
-            #region 定义请求体中的内容 并转成二进制
-            string urlBody = @"file:文件";
+            string result = "";
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
 
-            var modelIdStrByte = Encoding.UTF8.GetBytes(urlBody);//modelId所有字符串二进制
+            #region 添加Post 参数
+            byte[] data = Encoding.UTF8.GetBytes(content);
+            req.ContentLength = data.Length;
+            using (Stream reqStream = req.GetRequestStream())
+            {
+                reqStream.Write(data, 0, data.Length);
+                reqStream.Close();
+            }
             #endregion
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-
-            Stream myRequestStream = request.GetRequestStream();//定义请求流
-
-            //将各个二进制 安顺序写入请求流 modelIdStr -> (fileContentStr + fileContent) -> uodateTimeStr -> encryptStr
-            myRequestStream.Write(modelIdStrByte, 0, modelIdStrByte.Length);
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();//发送
-
-            Stream myResponseStream = response.GetResponseStream();//获取返回值
-            StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
-
-            string retString = myStreamReader.ReadToEnd();
-
-            myStreamReader.Close();
-            myResponseStream.Close();
-
-            return retString;
+            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            Stream stream = resp.GetResponseStream();
+            //获取响应内容
+            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+            {
+                result = reader.ReadToEnd();
+            }
+            return result;
         }
-
+        
         public string Post(string url, FormUrlEncodedContent body)
         {
             using (var httpClient = new HttpClient())
