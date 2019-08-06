@@ -24,8 +24,8 @@ namespace WindowsFormsApp3
         private void button1_Click(object sender, EventArgs e)
         {
             comboBox3.Text = GetResult(
-                GetHisogram(Resize(@"C:\Users\tom86\Desktop\85491.png", @"C:\Users\tom86\Desktop\85491-AAA.png")),
-                GetHisogram(Resize(@"C:\Users\tom86\Desktop\85490.png", @"C:\Users\tom86\Desktop\85490-BBB.png"))
+                GetHisogram(Resize(@"C:\Users\tom86\Desktop\85491.png")),
+                GetHisogram(Resize(@"C:\Users\tom86\Desktop\85490.png"))
                 ).ToString();
 
             //comboBox3.Text = CheckImg(@"C:\Users\tom86\Desktop\85491.png", @"C:\Users\tom86\Desktop\85491.png").ToString();
@@ -77,13 +77,25 @@ namespace WindowsFormsApp3
         /// <param name="imageFile">需要对比的图片地址</param>
         /// <param name="newImageFile">转化后的新图片地址</param>
         /// <returns></returns>
-        public Bitmap Resize(string imageFile, string newImageFile)
+        public Bitmap Resize(string imageFile)
         {
+            var dn = Path.GetDirectoryName(imageFile);//文件所在目录
+            var fnwe = Path.GetFileNameWithoutExtension(imageFile);//文件名（不带后缀）
+            var e = Path.GetExtension(imageFile);//后缀名
+            var newImageFile = dn + "\\" + fnwe;
+            var fullPath = newImageFile + e;
+
             Bitmap imgOutput = new Bitmap(Image.FromFile(imageFile), 256, 256);
-            imgOutput.Save(newImageFile, ImageFormat.Jpeg);
+            var i = 0;
+            while (File.Exists(fullPath))
+            {
+                i++;
+                fullPath = newImageFile + "(" + i + ")" + e;
+            }
+            imgOutput.Save(fullPath, ImageFormat.Jpeg);
             imgOutput.Dispose();
 
-            return (Bitmap)Image.FromFile(newImageFile);
+            return (Bitmap)Image.FromFile(fullPath);
         }
 
         //计算图像的直方图
