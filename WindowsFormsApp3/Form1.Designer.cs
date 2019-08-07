@@ -39,6 +39,8 @@
             this.btnSpeak = new System.Windows.Forms.Button();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
+            this.comboBox6 = new System.Windows.Forms.ComboBox();
+            this.comboBox7 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -82,14 +84,14 @@
             // comboBox3
             // 
             this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(230, 231);
+            this.comboBox3.Location = new System.Drawing.Point(149, 270);
             this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(362, 20);
+            this.comboBox3.Size = new System.Drawing.Size(75, 20);
             this.comboBox3.TabIndex = 5;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(149, 278);
+            this.pictureBox1.Location = new System.Drawing.Point(149, 311);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(194, 110);
             this.pictureBox1.TabIndex = 6;
@@ -97,7 +99,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(398, 278);
+            this.pictureBox2.Location = new System.Drawing.Point(398, 311);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(194, 110);
             this.pictureBox2.TabIndex = 7;
@@ -139,11 +141,29 @@
             this.comboBox5.Size = new System.Drawing.Size(362, 20);
             this.comboBox5.TabIndex = 11;
             // 
+            // comboBox6
+            // 
+            this.comboBox6.FormattingEnabled = true;
+            this.comboBox6.Location = new System.Drawing.Point(230, 233);
+            this.comboBox6.Name = "comboBox6";
+            this.comboBox6.Size = new System.Drawing.Size(362, 20);
+            this.comboBox6.TabIndex = 12;
+            // 
+            // comboBox7
+            // 
+            this.comboBox7.FormattingEnabled = true;
+            this.comboBox7.Location = new System.Drawing.Point(230, 270);
+            this.comboBox7.Name = "comboBox7";
+            this.comboBox7.Size = new System.Drawing.Size(362, 20);
+            this.comboBox7.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.comboBox7);
+            this.Controls.Add(this.comboBox6);
             this.Controls.Add(this.comboBox5);
             this.Controls.Add(this.comboBox4);
             this.Controls.Add(this.btnSpeak);
@@ -176,6 +196,8 @@
         private System.Windows.Forms.Button btnSpeak;
         private System.Windows.Forms.ComboBox comboBox4;
         private System.Windows.Forms.ComboBox comboBox5;
+        private System.Windows.Forms.ComboBox comboBox6;
+        private System.Windows.Forms.ComboBox comboBox7;
     }
 }
 

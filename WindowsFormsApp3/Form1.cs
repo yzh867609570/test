@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Speech.Recognition;
 
 namespace WindowsFormsApp3
 {
@@ -21,17 +22,24 @@ namespace WindowsFormsApp3
         public Form1()
         {
             InitializeComponent();
-        }
 
+            comboBox6.Text = @"C:\Users\tom86\Desktop\";
+            comboBox7.Text = @"C:\Users\tom86\Desktop\";
+
+            comboBox4.Text = @"C:\Users\tom86\Desktop\";
+        }
+        //文字转语音
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SpVoice voice = new SpVoice();
-            voice.Rate = -5; //语速,[-10,10]
-            voice.Volume = 100; //音量,[0,100]
-            voice.Voice = voice.GetVoices().Item(0); //语音库
-            voice.Speak(comboBox4.Text);
-        }
+            //SpVoice voice = new SpVoice();
+            //voice.Rate = -5; //语速,[-10,10]
+            //voice.Volume = 100; //音量,[0,100]
+            //voice.Voice = voice.GetVoices().Item(0); //语音库
+            //voice.Speak(comboBox4.Text);
 
+            VoiceToText(comboBox4.Text);
+        }
+        //文字转语音录频
         private void btnSpeak_Click(object sender, EventArgs e)
         {
             SpFileStream stream = new SpFileStream();
@@ -41,14 +49,14 @@ namespace WindowsFormsApp3
             voice.Speak(comboBox5.Text);
             voice.WaitUntilDone(Timeout.Infinite);
             stream.Close();
-            MessageBox.Show("ok");
+            MessageBox.Show("转换音频文件成功");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             comboBox3.Text = GetResult(
-                GetHisogram(Resize(@"C:\Users\tom86\Desktop\85491.png")),
-                GetHisogram(Resize(@"C:\Users\tom86\Desktop\85490.png"))
+                GetHisogram(Resize(comboBox6.Text)),
+                GetHisogram(Resize(comboBox7.Text))
                 ).ToString();
 
             //comboBox3.Text = CheckImg(@"C:\Users\tom86\Desktop\85491.png", @"C:\Users\tom86\Desktop\85491.png").ToString();
@@ -91,6 +99,71 @@ namespace WindowsFormsApp3
             //comboBox2.Text = PostData(url, "file:文件");
 
             //comboBox3.Text = Post1(url, "file=文件") + Post1(url, "file:文件");
+
+        }
+
+        private SpeechRecognitionEngine SRE = new SpeechRecognitionEngine();
+        /// <summary>
+        //  语音转文本
+        /// </summary>
+        /// <param name="str"></param>
+        private void VoiceToText(object str)
+        {
+            try
+            {
+                string filepath = str.ToString(); ;
+                SRE.SetInputToWaveFile(filepath);         //<=======默认的语音输入设备，你可以设定为去识别一个WAV文件。
+                GrammarBuilder GB = new GrammarBuilder();
+                //需要判断的文本（相当于语音库）
+                GB.Append(new Choices(new string[] { "时间", "电话", "短信", "定位", "天气", "帮助" }));
+                Grammar G = new Grammar(GB);
+                G.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(G_SpeechRecognized);
+                SRE.LoadGrammar(G);
+                SRE.RecognizeAsync(RecognizeMode.Multiple); //<=======异步调用识别引擎，允许多次识别（否则程序只响应你的一句话）
+            }
+            catch (Exception ex)
+            {
+                string s = ex.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 判断语音并转化为需要输出的文本
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void G_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            string result = e.Result.Text;
+            string RetSpeck = string.Empty;
+            switch (result)
+            {
+                case "时间":
+                    RetSpeck = "你输入了时间";
+                    break;
+                case "电话":
+                    RetSpeck = "你输入了电话";
+                    break;
+                case "短信":
+                    RetSpeck = "你输入了短信";
+                    break;
+                case "定位":
+                    RetSpeck = "你输入了定位";
+                    break;
+                case "天气":
+                    RetSpeck = "你输入了天气";
+                    break;
+                case "帮助":
+                    RetSpeck = "你输入了帮助";
+                    break;
+            }
+            //speak(RetSpeck);
+
+            SpVoice voice = new SpVoice();
+            voice.Rate = -5; //语速,[-10,10]
+            voice.Volume = 100; //音量,[0,100]
+            voice.Voice = voice.GetVoices().Item(0); //语音库
+            voice.Speak(RetSpeck);
         }
 
         #region 图像相似度对比
@@ -124,7 +197,7 @@ namespace WindowsFormsApp3
         //计算图像的直方图
         public int[] GetHisogram(Bitmap img)
         {
-            BitmapData data = img.LockBits(new System.Drawing.Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            BitmapData data = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
             int[] histogram = new int[256];
 
@@ -147,7 +220,6 @@ namespace WindowsFormsApp3
                         histogram[mean]++;
 
                         ptr += 3;
-
                     }
                     ptr += remain;
                 }
