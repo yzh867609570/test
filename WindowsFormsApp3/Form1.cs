@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Speech.Recognition;
+using System.Speech.Synthesis;
 
 namespace WindowsFormsApp3
 {
@@ -31,12 +32,6 @@ namespace WindowsFormsApp3
         //文字转语音
         private void btnSave_Click(object sender, EventArgs e)
         {
-            //SpVoice voice = new SpVoice();
-            //voice.Rate = -5; //语速,[-10,10]
-            //voice.Volume = 100; //音量,[0,100]
-            //voice.Voice = voice.GetVoices().Item(0); //语音库
-            //voice.Speak(comboBox4.Text);
-
             VoiceToText(comboBox4.Text);
         }
         //文字转语音录频
@@ -127,6 +122,7 @@ namespace WindowsFormsApp3
             }
         }
 
+        SpeechSynthesizer speech = new SpeechSynthesizer();
         /// <summary>
         /// 判断语音并转化为需要输出的文本
         /// </summary>
@@ -157,13 +153,13 @@ namespace WindowsFormsApp3
                     RetSpeck = "你输入了帮助";
                     break;
             }
-            //speak(RetSpeck);
+            speech.SpeakAsync(RetSpeck);
 
-            SpVoice voice = new SpVoice();
-            voice.Rate = -5; //语速,[-10,10]
-            voice.Volume = 100; //音量,[0,100]
-            voice.Voice = voice.GetVoices().Item(0); //语音库
-            voice.Speak(RetSpeck);
+            //SpVoice voice = new SpVoice();
+            //voice.Rate = -5; //语速,[-10,10]
+            //voice.Volume = 100; //音量,[0,100]
+            //voice.Voice = voice.GetVoices().Item(0); //语音库
+            //voice.Speak(RetSpeck);
         }
 
         #region 图像相似度对比
