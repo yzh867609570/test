@@ -1,8 +1,6 @@
 ﻿using SpeechLib;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -11,7 +9,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
@@ -49,10 +46,13 @@ namespace WindowsFormsApp3
 
         private void button1_Click(object sender, EventArgs e)
         {
-            comboBox3.Text = GetResult(
-                GetHisogram(Resize(comboBox6.Text)),
-                GetHisogram(Resize(comboBox7.Text))
-                ).ToString();
+            try
+            {
+                comboBox3.Text = GetResult(
+                    GetHisogram(Resize(comboBox6.Text)),
+                    GetHisogram(Resize(comboBox7.Text))
+                    ).ToString();
+            }catch (Exception ex){}
 
             //comboBox3.Text = CheckImg(@"C:\Users\tom86\Desktop\85491.png", @"C:\Users\tom86\Desktop\85491.png").ToString();
         }
@@ -88,7 +88,7 @@ namespace WindowsFormsApp3
 
             comboBox2.Text = Post2(url, new Dictionary<string, string>
                 {
-                    { "file", "文件"}
+                    { "file", @"C:\Users\tom86\Desktop\1.jpg"}
                 });
 
             //comboBox2.Text = PostData(url, "file:文件");
@@ -97,6 +97,15 @@ namespace WindowsFormsApp3
 
         }
 
+        #region cmd
+        public void Cmd()
+        {
+            CMDHelper.RunCmd("", out string result);
+            comboBox8.Text = result;
+        }
+        #endregion
+
+        #region 语音/文本
         private SpeechRecognitionEngine SRE = new SpeechRecognitionEngine();
         /// <summary>
         //  语音转文本
@@ -161,6 +170,7 @@ namespace WindowsFormsApp3
             //voice.Voice = voice.GetVoices().Item(0); //语音库
             //voice.Speak(RetSpeck);
         }
+        #endregion
 
         #region 图像相似度对比
         /// <summary>
@@ -171,6 +181,12 @@ namespace WindowsFormsApp3
         /// <returns></returns>
         public Bitmap Resize(string imageFile)
         {
+            if (!File.Exists(imageFile))
+            {
+                MessageBox.Show("文件不存在！");
+                throw new Exception("文件不存在！");
+            }
+
             var dn = Path.GetDirectoryName(imageFile);//文件所在目录
             var fnwe = Path.GetFileNameWithoutExtension(imageFile);//文件名（不带后缀）
             var e = Path.GetExtension(imageFile);//后缀名
@@ -525,5 +541,9 @@ namespace WindowsFormsApp3
             }
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Cmd();
+        }
     }
 }
