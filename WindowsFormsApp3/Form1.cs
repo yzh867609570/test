@@ -551,10 +551,12 @@ namespace WindowsFormsApp3
         //语音识别
         private void button4_Click(object sender, EventArgs e)
         {
-            // 设置APPID/AK/SK
+            //设置语音识别应用的账号信息(百度智能云管理中心) APP_ID/API_KEY/SECRET_KEY
+            //demo里的账号
             //var APP_ID = "14433392";
             //var API_KEY = "C7WMYgLeWv3Wm2yogwv5gD08";
             //var SECRET_KEY = "xcvwiwikALBDBaIcGisNQ6aQImtj3qua";
+            //请更改成自己的账号
             string APP_ID = "16982575";
             string API_KEY = "0kC4dDwWl3hqo2xz2c4113ZP";
             string SECRET_KEY = "8aneCyn9KVAWjGKAIfpcr3vMCFt19kIb";
