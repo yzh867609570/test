@@ -12,6 +12,8 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
+using Baidu.Aip.Speech;
+using Newtonsoft.Json.Linq;
 
 namespace WindowsFormsApp3
 {
@@ -38,6 +40,7 @@ namespace WindowsFormsApp3
             stream.Open(@"C:\Users\tom86\Desktop\voice.wav", SpeechStreamFileMode.SSFMCreateForWrite, false);
             SpVoice voice = new SpVoice();
             voice.AudioOutputStream = stream;
+            //voice.Rate = 1;//语速
             voice.Speak(comboBox5.Text);
             voice.WaitUntilDone(Timeout.Infinite);
             stream.Close();
@@ -279,12 +282,12 @@ namespace WindowsFormsApp3
         {
             MemoryStream ms1 = new MemoryStream();
             Image image1 = Image.FromFile(filePath1);
-            image1.Save(ms1, System.Drawing.Imaging.ImageFormat.Png);
+            image1.Save(ms1, ImageFormat.Png);
 
             string img1 = Convert.ToBase64String(ms1.ToArray());
 
             Image image2 = Image.FromFile(filePath2);
-            image2.Save(ms1, System.Drawing.Imaging.ImageFormat.Png);
+            image2.Save(ms1, ImageFormat.Png);
             string img2 = Convert.ToBase64String(ms1.ToArray());
 
             if (img1.Equals(img2))
@@ -544,6 +547,45 @@ namespace WindowsFormsApp3
         private void button3_Click(object sender, EventArgs e)
         {
             Cmd();
+        }
+        //语音识别
+        private void button4_Click(object sender, EventArgs e)
+        {
+            // 设置APPID/AK/SK
+            //var APP_ID = "14433392";
+            //var API_KEY = "C7WMYgLeWv3Wm2yogwv5gD08";
+            //var SECRET_KEY = "xcvwiwikALBDBaIcGisNQ6aQImtj3qua";
+            string APP_ID = "16982575";
+            string API_KEY = "0kC4dDwWl3hqo2xz2c4113ZP";
+            string SECRET_KEY = "8aneCyn9KVAWjGKAIfpcr3vMCFt19kIb";
+
+            var client = new Asr(APP_ID, API_KEY, SECRET_KEY);
+
+            var videoPath = @"C:\Users\tom86\Desktop\voice.wav";
+            var type = Path.GetExtension(videoPath);
+            var data = File.ReadAllBytes(videoPath);
+
+            //dev_pid 可选参数
+            //1536    普通话(支持简单的英文识别)  搜索模型 无标点 支持自定义词库 http://vop.baidu.com/server_api
+            //1537    普通话(纯中文识别)  输入法模型 有标点 不支持自定义词库 http://vop.baidu.com/server_api
+            //1737    英语 无标点 不支持自定义词库 http://vop.baidu.com/server_api
+            //1637    粤语 有标点 不支持自定义词库 http://vop.baidu.com/server_api
+            //1837    四川话 有标点 不支持自定义词库 http://vop.baidu.com/server_api
+            //1936    普通话远场 远场模型    有标点 不支持自定义词库    http://vop.baidu.com/server_api
+            //80001语音识别极速版(收费)
+            //80001   普通话 极速版输入法模型    有标点 支持自定义词库 http://vop.baidu.com/pro_api
+            var options = new Dictionary<string, object>
+                 {
+                    {"dev_pid", 1536}
+                 };
+            client.Timeout = 120000; // 若语音较长，建议设置更大的超时时间. ms
+            var result = client.Recognize(data, type.TrimStart('.'), 16000, options);
+            comboBox9.Text = Convert.ToString(result);
+            result.TryGetValue("result", out JToken resultStr);
+            if (Convert.ToString(resultStr) != "")
+            {
+                comboBox9.Text = Convert.ToString(resultStr);
+            }
         }
     }
 }
