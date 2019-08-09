@@ -186,27 +186,35 @@ namespace WindowsFormsApp3
         {
             if (!File.Exists(imageFile))
             {
-                MessageBox.Show("文件不存在！");
-                throw new Exception("文件不存在！");
+                var fileName = Path.GetFileName(imageFile);//文件名（不带后缀）
+                MessageBox.Show(string.Format("{0} 不存在！", fileName));
+                throw new Exception(string.Format("{0} 不存在！", fileName));
             }
 
-            var dn = Path.GetDirectoryName(imageFile);//文件所在目录
-            var fnwe = Path.GetFileNameWithoutExtension(imageFile);//文件名（不带后缀）
-            var e = Path.GetExtension(imageFile);//后缀名
-            var newImageFile = dn + "\\" + fnwe;
-            var fullPath = newImageFile + e;
+            #region 保存图片
+            //var dn = Path.GetDirectoryName(imageFile);//文件所在目录
+            //var fnwe = Path.GetFileNameWithoutExtension(imageFile);//文件名（不带后缀）
+            //var e = Path.GetExtension(imageFile);//后缀名
+            //var newImageFile = dn + "\\" + fnwe;
+            //var fullPath = newImageFile + e;
 
+            //Bitmap imgOutput = new Bitmap(Image.FromFile(imageFile), 256, 256);
+            //var i = 0;
+            //while (File.Exists(fullPath))
+            //{
+            //    i++;
+            //    fullPath = newImageFile + "(" + i + ")" + e;
+            //}
+            //imgOutput.Save(fullPath, ImageFormat.Jpeg);
+            //imgOutput.Dispose();
+
+            //return (Bitmap)Image.FromFile(fullPath);
+            #endregion
+
+            #region 直接获取图片数据（不保存图片）
             Bitmap imgOutput = new Bitmap(Image.FromFile(imageFile), 256, 256);
-            var i = 0;
-            while (File.Exists(fullPath))
-            {
-                i++;
-                fullPath = newImageFile + "(" + i + ")" + e;
-            }
-            imgOutput.Save(fullPath, ImageFormat.Jpeg);
-            imgOutput.Dispose();
-
-            return (Bitmap)Image.FromFile(fullPath);
+            return imgOutput;
+            #endregion
         }
 
         //计算图像的直方图
@@ -275,30 +283,74 @@ namespace WindowsFormsApp3
                 return result / j;
             }
         }
-
         #endregion
 
-        public bool CheckImg(string filePath1, string filePath2)
+        #region 图片相似度比较2
+        /// <summary>
+        /// 图片相似度比较
+        /// </summary>
+        /// <param name="map1">标准图</param>
+        /// <param name="map2">欲比较图</param>
+        public float Semblance(Bitmap map1, Bitmap map2, bool jc)
         {
-            MemoryStream ms1 = new MemoryStream();
-            Image image1 = Image.FromFile(filePath1);
-            image1.Save(ms1, ImageFormat.Png);
-
-            string img1 = Convert.ToBase64String(ms1.ToArray());
-
-            Image image2 = Image.FromFile(filePath2);
-            image2.Save(ms1, ImageFormat.Png);
-            string img2 = Convert.ToBase64String(ms1.ToArray());
-
-            if (img1.Equals(img2))
+            int width = map1.Width;
+            int height = map1.Height;
+            long argv = 0;
+            Bitmap imag = new Bitmap(width, height);
+            //转换大小
+            map1 = new Bitmap(map1, width, height);
+            map2 = new Bitmap(map2, width, height);
+            if (jc)
             {
-                return true;
+                //灰度化
+                map1 = GrayByPixels(map1);
+                map2 = GrayByPixels(map2);
+                //二值化
+                //map1 = ConvertTo1Bpp1(map1, "10");
+                //map2 = ConvertTo1Bpp1(map2, "10");
             }
-            else
+            //将两张图相同像素设置为0，不同像素设置为1
+            for (int i = 0; i < map1.Width; i++)
             {
-                return false;
+                for (int j = 0; j < map1.Height; j++)
+                {
+                    Color color1 = map1.GetPixel(i, j);
+                    Color color2 = map2.GetPixel(i, j);
+                    if (color1.B == color2.B)
+                    {
+                        imag.SetPixel(i, j, Color.FromArgb(0, 0, 0));
+                    }
+                    else
+                    {
+                        imag.SetPixel(i, j, Color.FromArgb(1, 1, 1));
+                        argv++;
+                    }
+                }
             }
+            long xsh = width * height;
+            float butongb = (float)argv / xsh;
+            return 1 - butongb;
         }
+
+        //图像灰度处理
+        public Bitmap GrayByPixels(Bitmap bmpcode)
+        {
+            bmpcode = new Bitmap(bmpcode);
+            for (int i = 0; i < bmpcode.Height; i++)
+            {
+                for (int j = 0; j < bmpcode.Width; j++)
+                {
+                    int tmpValue = GetGrayNumColor(bmpcode.GetPixel(j, i));
+                    bmpcode.SetPixel(j, i, Color.FromArgb(tmpValue, tmpValue, tmpValue));
+                }
+            }
+            return bmpcode;
+        }
+        private int GetGrayNumColor(Color codecolor)
+        {
+            return (codecolor.R * 19595 + codecolor.G * 38469 + codecolor.B * 7472) >> 16;
+        }
+        #endregion
 
         /// <summary>
         /// POST传值
@@ -588,6 +640,13 @@ namespace WindowsFormsApp3
             {
                 comboBox9.Text = Convert.ToString(resultStr);
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Bitmap img1 = new Bitmap(Image.FromFile(comboBox6.Text));
+            Bitmap img2 = new Bitmap(Image.FromFile(comboBox7.Text));
+            comboBox3.Text = Semblance(img1, img2, true).ToString();
         }
     }
 }
