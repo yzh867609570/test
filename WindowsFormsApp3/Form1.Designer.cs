@@ -46,6 +46,9 @@
             this.button4 = new System.Windows.Forms.Button();
             this.comboBox9 = new System.Windows.Forms.ComboBox();
             this.button5 = new System.Windows.Forms.Button();
+            this.play_Button = new System.Windows.Forms.Button();
+            this.comboBox10 = new System.Windows.Forms.ComboBox();
+            this.play2_Button = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -93,12 +96,14 @@
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(75, 20);
             this.comboBox3.TabIndex = 5;
+            this.comboBox3.Text = "相似度";
             // 
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(149, 311);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(194, 110);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
             // 
@@ -107,6 +112,7 @@
             this.pictureBox2.Location = new System.Drawing.Point(398, 311);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(194, 110);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 7;
             this.pictureBox2.TabStop = false;
             // 
@@ -116,17 +122,17 @@
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 8;
-            this.btnSave.Text = "btnSave";
+            this.btnSave.Text = "语言识别";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnSpeak
             // 
-            this.btnSpeak.Location = new System.Drawing.Point(149, 192);
+            this.btnSpeak.Location = new System.Drawing.Point(68, 192);
             this.btnSpeak.Name = "btnSpeak";
-            this.btnSpeak.Size = new System.Drawing.Size(75, 23);
+            this.btnSpeak.Size = new System.Drawing.Size(156, 23);
             this.btnSpeak.TabIndex = 9;
-            this.btnSpeak.Text = "btnSpeak";
+            this.btnSpeak.Text = "文字转语音录频 .wav";
             this.btnSpeak.UseVisualStyleBackColor = true;
             this.btnSpeak.Click += new System.EventHandler(this.btnSpeak_Click);
             // 
@@ -208,11 +214,42 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
+            // play_Button
+            // 
+            this.play_Button.Location = new System.Drawing.Point(632, 231);
+            this.play_Button.Name = "play_Button";
+            this.play_Button.Size = new System.Drawing.Size(75, 23);
+            this.play_Button.TabIndex = 19;
+            this.play_Button.Text = "播放";
+            this.play_Button.UseVisualStyleBackColor = true;
+            this.play_Button.Click += new System.EventHandler(this.play_Button_Click);
+            // 
+            // comboBox10
+            // 
+            this.comboBox10.FormattingEnabled = true;
+            this.comboBox10.Location = new System.Drawing.Point(632, 270);
+            this.comboBox10.Name = "comboBox10";
+            this.comboBox10.Size = new System.Drawing.Size(156, 20);
+            this.comboBox10.TabIndex = 20;
+            // 
+            // play2_Button
+            // 
+            this.play2_Button.Location = new System.Drawing.Point(713, 231);
+            this.play2_Button.Name = "play2_Button";
+            this.play2_Button.Size = new System.Drawing.Size(75, 23);
+            this.play2_Button.TabIndex = 21;
+            this.play2_Button.Text = "播放2";
+            this.play2_Button.UseVisualStyleBackColor = true;
+            this.play2_Button.Click += new System.EventHandler(this.play2_Button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.play2_Button);
+            this.Controls.Add(this.comboBox10);
+            this.Controls.Add(this.play_Button);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.comboBox9);
             this.Controls.Add(this.button4);
@@ -259,6 +296,9 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ComboBox comboBox9;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button play_Button;
+        private System.Windows.Forms.ComboBox comboBox10;
+        private System.Windows.Forms.Button play2_Button;
     }
 }
 

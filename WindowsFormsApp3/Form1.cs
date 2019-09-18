@@ -51,9 +51,15 @@ namespace WindowsFormsApp3
         {
             try
             {
+                var bitOne = Resize(comboBox6.Text);
+                var bitTwo = Resize(comboBox7.Text);
+
+                pictureBox1.Image = bitOne;
+                pictureBox2.Image = bitTwo;
+
                 comboBox3.Text = GetResult(
-                    GetHisogram(Resize(comboBox6.Text)),
-                    GetHisogram(Resize(comboBox7.Text))
+                    GetHisogram(bitOne),
+                    GetHisogram(bitTwo)
                     ).ToString();
             }catch (Exception ex){}
 
@@ -212,8 +218,7 @@ namespace WindowsFormsApp3
             #endregion
 
             #region 直接获取图片数据（不保存图片）
-            Bitmap imgOutput = new Bitmap(Image.FromFile(imageFile), 256, 256);
-            return imgOutput;
+            return new Bitmap(Image.FromFile(imageFile), 256, 256);
             #endregion
         }
 
@@ -615,7 +620,7 @@ namespace WindowsFormsApp3
 
             var client = new Asr(APP_ID, API_KEY, SECRET_KEY);
 
-            var videoPath = @"C:\Users\tom86\Desktop\voice.wav";
+            var videoPath = comboBox4.Text;
             var type = Path.GetExtension(videoPath);
             var data = File.ReadAllBytes(videoPath);
 
@@ -647,6 +652,21 @@ namespace WindowsFormsApp3
             Bitmap img1 = new Bitmap(Image.FromFile(comboBox6.Text));
             Bitmap img2 = new Bitmap(Image.FromFile(comboBox7.Text));
             comboBox3.Text = Semblance(img1, img2, true).ToString();
+        }
+
+        private void play_Button_Click(object sender, EventArgs e)
+        {
+            SpeechSynthesizer speech = new SpeechSynthesizer();
+            speech.SpeakAsync(comboBox10.Text);
+        }
+
+        private void play2_Button_Click(object sender, EventArgs e)
+        {
+            SpVoice voice = new SpVoice();
+            voice.Rate = -5; //语速,[-10,10]
+            voice.Volume = 100; //音量,[0,100]
+            voice.Voice = voice.GetVoices().Item(0); //语音库
+            voice.Speak(comboBox10.Text);
         }
     }
 }
