@@ -49,6 +49,8 @@
             this.play_Button = new System.Windows.Forms.Button();
             this.comboBox10 = new System.Windows.Forms.ComboBox();
             this.play2_Button = new System.Windows.Forms.Button();
+            this.kill_Button = new System.Windows.Forms.Button();
+            this.comboBox11 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -242,11 +244,31 @@
             this.play2_Button.UseVisualStyleBackColor = true;
             this.play2_Button.Click += new System.EventHandler(this.play2_Button_Click);
             // 
+            // kill_Button
+            // 
+            this.kill_Button.Location = new System.Drawing.Point(632, 311);
+            this.kill_Button.Name = "kill_Button";
+            this.kill_Button.Size = new System.Drawing.Size(75, 23);
+            this.kill_Button.TabIndex = 22;
+            this.kill_Button.Text = "关闭进程";
+            this.kill_Button.UseVisualStyleBackColor = true;
+            this.kill_Button.Click += new System.EventHandler(this.kill_Button_Click);
+            // 
+            // comboBox11
+            // 
+            this.comboBox11.FormattingEnabled = true;
+            this.comboBox11.Location = new System.Drawing.Point(632, 340);
+            this.comboBox11.Name = "comboBox11";
+            this.comboBox11.Size = new System.Drawing.Size(156, 20);
+            this.comboBox11.TabIndex = 23;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.comboBox11);
+            this.Controls.Add(this.kill_Button);
             this.Controls.Add(this.play2_Button);
             this.Controls.Add(this.comboBox10);
             this.Controls.Add(this.play_Button);
@@ -299,6 +321,8 @@
         private System.Windows.Forms.Button play_Button;
         private System.Windows.Forms.ComboBox comboBox10;
         private System.Windows.Forms.Button play2_Button;
+        private System.Windows.Forms.Button kill_Button;
+        private System.Windows.Forms.ComboBox comboBox11;
     }
 }
 

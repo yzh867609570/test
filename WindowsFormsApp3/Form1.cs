@@ -657,16 +657,42 @@ namespace WindowsFormsApp3
         private void play_Button_Click(object sender, EventArgs e)
         {
             SpeechSynthesizer speech = new SpeechSynthesizer();
+            speech.Volume = 100;
             speech.SpeakAsync(comboBox10.Text);
         }
 
         private void play2_Button_Click(object sender, EventArgs e)
         {
             SpVoice voice = new SpVoice();
-            voice.Rate = -5; //语速,[-10,10]
+            voice.Rate = 0; //语速,[-10,10]
             voice.Volume = 100; //音量,[0,100]
             voice.Voice = voice.GetVoices().Item(0); //语音库
             voice.Speak(comboBox10.Text);
+        }
+
+        /// <summary>
+        /// 关闭进程
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void kill_Button_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process[] ps = System.Diagnostics.Process.GetProcessesByName(comboBox11.Text);
+                MessageBox.Show(string.Format("{0} 进程数: {1}", comboBox11.Text, ps.Length));
+                foreach (System.Diagnostics.Process p in ps)
+                {
+                    if (!p.CloseMainWindow())
+                    {
+                        p.Kill();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+            }
         }
     }
 }
